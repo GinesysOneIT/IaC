@@ -50,7 +50,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   name                              = var.name
   resource_group_name               = data.azurerm_resource_group.rg_erp_stage.name
   tags = var.tags
-  zones = []
+
   backend_address_pool {
     fqdns        = []
     ip_addresses = []
@@ -73,7 +73,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   backend_http_settings {
     affinity_cookie_name                = "ApplicationGatewayAffinity"
     cookie_based_affinity               = "Disabled"
-    host_name                           = ""
+    
     name                                = "setting_erp-ideal-stage_https"
     pick_host_name_from_backend_address = false
     port                                = 443
@@ -87,7 +87,6 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     name                                = "setting_erp-report-stage_https"
     pick_host_name_from_backend_address = false
     port                                = 443
-    probe_name                          = ""
     protocol                            = "Https"
     request_timeout                     = 20
     trusted_root_certificate_names      = []
@@ -115,7 +114,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     response_buffering_enabled = false
   }
   http_listener {
-    firewall_policy_id             = ""
+
     frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
     frontend_port_name             = "port_443"
     host_name                      = "stage-ideal.ginesys.cloud"
@@ -124,10 +123,10 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     protocol                       = "Https"
     require_sni                    = true
     ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
-    ssl_profile_name               = ""
+
   }
   http_listener {
-    firewall_policy_id             = ""
+
     frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
     frontend_port_name             = "port_443"
     host_name                      = "stage-report.ginesys.cloud"
@@ -136,7 +135,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     protocol                       = "Https"
     require_sni                    = true
     ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
-    ssl_profile_name               = ""
+
   }
   identity {
     identity_ids = ["/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mngid_erp_systems_stage"]
@@ -168,9 +167,9 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     tier     = "Standard_v2"
   }
   ssl_certificate {
-    data                = "" # Masked sensitive attribute
+
     key_vault_secret_id = "https://keyvaulterpstage01.vault.azure.net:443/secrets/ssl-cert-wildcard-ginesys-cloud/"
     name                = "ssl-cert-wildcard-ginesys-cloud"
-    password            = "" # Masked sensitive attribute
+
   }
 }
