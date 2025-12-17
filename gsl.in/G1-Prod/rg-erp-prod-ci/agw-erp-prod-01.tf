@@ -1,26 +1,55 @@
+variable name {
+  type        = string
+  default     = "agw-erp-prod-01"
+  description = "name of the Application Gateway"
+}
 
-resource "azurerm_application_gateway" "agw-erp-prod-01" {
-  enable_http2                      = true
-  fips_enabled                      = false
-  firewall_policy_id                = ""
-  force_firewall_policy_association = false
-  location                          = "jioindiawest"
-  name                              = "agw-erp-prod-01"
-  resource_group_name               = "rg-erp-stage"
-  tags = {
+variable tags {
+  type = map(string)
+  default = {
     BACode      = "None"
     Billing     = "Internal"
     CreatedBy   = "ArindamBanerjee"
     CreatedOn   = "2025-12-02"
-    Division    = "TechTeam"
+    Division    = "TechTeam" 
     Environment = "DevStage"
-    LifeSpan    = "Permanent"
+    LifeSpan    = "Permanent" 
+
     Owner       = "RajarshiBasuRoy"
     Product     = "ERP"
     Purpose     = "Connectivity"
-    Usage       = "Platform"
+    Usage       = "Platform"  
     ValidTill   = "None"
   }
+  description = "Tags to be applied to resources"
+}
+
+
+
+
+
+data "azurerm_resource_group" "rg_erp_stage" {
+  name = "rg-erp-stage"
+}
+
+resource "azurerm_public_ip" "pip_agw_erp_prod_01" {
+  name                = "pip_${var.name}"
+  location            = data.azurerm_resource_group.rg_erp_stage.location
+  resource_group_name = data.azurerm_resource_group.rg_erp_stage.name
+  allocation_method   = "Dynamic"
+  sku                 = "Standard"
+  tags = var.tags
+}
+
+
+resource "azurerm_application_gateway" "agw-erp-prod-01" {
+  enable_http2                      = true
+  fips_enabled                      = false
+  force_firewall_policy_association = false
+  location                          = data.azurerm_resource_group.rg_erp_stage.location
+  name                              = var.name
+  resource_group_name               = data.azurerm_resource_group.rg_erp_stage.name
+  tags = var.tags
   zones = []
   backend_address_pool {
     fqdns        = []
@@ -33,14 +62,10 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     name         = "backpool_erp-report-stage"
   }
   backend_http_settings {
-    affinity_cookie_name                = ""
     cookie_based_affinity               = "Disabled"
-    host_name                           = ""
     name                                = "setting_http"
-    path                                = ""
     pick_host_name_from_backend_address = false
     port                                = 80
-    probe_name                          = ""
     protocol                            = "Http"
     request_timeout                     = 20
     trusted_root_certificate_names      = []
@@ -50,10 +75,8 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     cookie_based_affinity               = "Disabled"
     host_name                           = ""
     name                                = "setting_erp-ideal-stage_https"
-    path                                = ""
     pick_host_name_from_backend_address = false
     port                                = 443
-    probe_name                          = ""
     protocol                            = "Https"
     request_timeout                     = 20
     trusted_root_certificate_names      = []
@@ -61,9 +84,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   backend_http_settings {
     affinity_cookie_name                = "ApplicationGatewayAffinity"
     cookie_based_affinity               = "Disabled"
-    host_name                           = ""
     name                                = "setting_erp-report-stage_https"
-    path                                = ""
     pick_host_name_from_backend_address = false
     port                                = 443
     probe_name                          = ""
@@ -73,12 +94,10 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   }
   frontend_ip_configuration {
     name                            = "appGwPublicFrontendIpIPv4"
-    private_ip_address              = ""
     private_ip_address_allocation   = "Dynamic"
-    private_link_configuration_name = ""
-    public_ip_address_id            = "/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-erp-stage/providers/Microsoft.Network/publicIPAddresses/pip_agw-erp-prod-01"
-    subnet_id                       = ""
+    public_ip_address_id            = azurerm_public_ip.pip_agw_erp_prod_01.id
   }
+
   frontend_port {
     name = "port_443"
     port = 443
@@ -129,10 +148,9 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     http_listener_name          = "listener_erp-ideal-stage_https"
     name                        = "rule_erp-ideal-stage_https"
     priority                    = 1
-    redirect_configuration_name = ""
-    rewrite_rule_set_name       = ""
+
     rule_type                   = "Basic"
-    url_path_map_name           = ""
+    
   }
   request_routing_rule {
     backend_address_pool_name   = "backpool_erp-report-stage"
@@ -140,10 +158,9 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     http_listener_name          = "listener_erp-report-stage_https"
     name                        = "rule_erp-report-stage_htts"
     priority                    = 2
-    redirect_configuration_name = ""
-    rewrite_rule_set_name       = ""
+  
     rule_type                   = "Basic"
-    url_path_map_name           = ""
+    
   }
   sku {
     capacity = 1
