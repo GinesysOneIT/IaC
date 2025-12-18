@@ -17,13 +17,17 @@ variable application_gateway_info {
 variable application_backend {
   type = map(object({
     ip_address = string
-    fqdn       = string
+    ginesys_url       = string
   }))
   default = {
     "vm-erp-rmbayepl-prod-ci" = {
       ip_address = "172.16.226.80"
-      fqdn       = "nunk.ginesys.cloud"
-    }
+      ginesys_url       = "nunk.ginesys.cloud"
+    },
+    "vm-erp-fashor-prod-ci" = {
+      ip_address = "172.16.226.20"
+      ginesys_url       = "fashor.ginesys.cloud"
+    },
   }
   description = "map of vm name and their private IPs and application configured dns to be added to backend address pool"
 }

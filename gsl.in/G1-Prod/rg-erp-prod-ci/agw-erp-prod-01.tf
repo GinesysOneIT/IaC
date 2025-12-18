@@ -103,7 +103,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
       name                           = "listener_${http_listener.key}_https"
       frontend_ip_configuration_name = "frontend_public_ip_configuration"
       frontend_port_name             = "port_443"
-      host_name                      = http_listener.value.fqdn
+      host_name                      = http_listener.value.ginesys_url
       protocol                       = "Https"
       require_sni                    = true
       ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
