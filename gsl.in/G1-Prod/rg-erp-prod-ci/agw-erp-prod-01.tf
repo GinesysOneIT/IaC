@@ -3,10 +3,12 @@ variable application_gateway_info {
   type = object({
     name        : string
     subnet_id   : string
+    resource_group_name : string
   })
   default = {
     name      = "agw-erp-prod-01"
-    subnet_id = "/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.Network/virtualNetworks/vnet-stage-01/subnets/snet-erp-agw-stage-01"
+    resource_group_name = "rg-erp-prod-ci"
+    subnet_id = "/subscriptions/4f070ccd-0168-41ab-a9a4-c13e2dd2626c/resourceGroups/rg-system-prod-ci/providers/Microsoft.Network/virtualNetworks/vnet-prod-ci-01/subnets/AzureAppGatewaySubnet"
   }
   description = "Applcation Gateway info like name , snet id etc"
 }
@@ -51,14 +53,14 @@ variable tags {
 
 
 
-data "azurerm_resource_group" "rg_erp_stage" {
-  name = "rg-erp-stage"
+data "azurerm_resource_group" "resource_group_for_all_components" {
+  name = var.application_gateway_info.resource_group_name
 }
 
 resource "azurerm_public_ip" "pip_agw_erp_prod_01" {
   name                = "pip_${var.application_gateway_info.name}"
-  location            = data.azurerm_resource_group.rg_erp_stage.location
-  resource_group_name = data.azurerm_resource_group.rg_erp_stage.name
+  location            = data.azurerm_resource_group.resource_group_for_all_components.location
+  resource_group_name = data.azurerm_resource_group.resource_group_for_all_components.name
   allocation_method   = "Dynamic"
   sku                 = "Standard"
   tags = var.tags
@@ -69,9 +71,9 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   enable_http2                      = true
   fips_enabled                      = false
   force_firewall_policy_association = false
-  location                          = data.azurerm_resource_group.rg_erp_stage.location
+  location                          = data.azurerm_resource_group.resource_group_for_all_components.location
   name                              = var.application_gateway_info.name
-  resource_group_name               = data.azurerm_resource_group.rg_erp_stage.name
+  resource_group_name               = data.azurerm_resource_group.resource_group_for_all_components.name
   tags = var.tags
 
 
