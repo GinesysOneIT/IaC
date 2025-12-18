@@ -4,6 +4,16 @@ variable name {
   description = "name of the Application Gateway"
 }
 
+# map of vm name and their private IPs and application configured dns to be added to backend address pool
+variable application_backend {
+  type = map(object({
+    ip_address = string
+    fqdn       = string
+  }))
+  default = {}
+  description = "map of vm name and their private IPs and application configured dns to be added to backend address pool"
+}
+
 variable tags {
   type = map(string)
   default = {
@@ -51,16 +61,18 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   resource_group_name               = data.azurerm_resource_group.rg_erp_stage.name
   tags = var.tags
 
-  backend_address_pool {
-    fqdns        = []
-    ip_addresses = []
-    name         = "backpool_erp-ideal-stage"
+
+  dynamic "backend_address_pool" {
+    for_each = var.application_backend
+
+    content {
+      name         = "backpool_${backend_address_pool.key}"
+      ip_addresses = backend_address_pool.value.ip_address != "" ? [backend_address_pool.value.ip_address] : []
+      fqdns        = []
+    }
   }
-  backend_address_pool {
-    fqdns        = []
-    ip_addresses = []
-    name         = "backpool_erp-report-stage"
-  }
+
+
   backend_http_settings {
     cookie_based_affinity               = "Disabled"
     name                                = "setting_http"
@@ -113,54 +125,43 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     request_buffering_enabled  = true
     response_buffering_enabled = false
   }
-  http_listener {
 
-    frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
-    frontend_port_name             = "port_443"
-    host_name                      = "stage-ideal.ginesys.cloud"
-    host_names                     = []
-    name                           = "listener_erp-ideal-stage_https"
-    protocol                       = "Https"
-    require_sni                    = true
-    ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
+ 
 
+  dynamic "http_listener" {
+    for_each = var.application_backend
+
+    content {
+      name                           = "listener_${http_listener.key}_https"
+      frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
+      frontend_port_name             = "port_443"
+      host_name                      = http_listener.value.fqdn
+      protocol                       = "Https"
+      require_sni                    = true
+      ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
+    }
   }
-  http_listener {
 
-    frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
-    frontend_port_name             = "port_443"
-    host_name                      = "stage-report.ginesys.cloud"
-    host_names                     = []
-    name                           = "listener_erp-report-stage_https"
-    protocol                       = "Https"
-    require_sni                    = true
-    ssl_certificate_name           = "ssl-cert-wildcard-ginesys-cloud"
-
-  }
+  
   identity {
     identity_ids = ["/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mngid_erp_systems_stage"]
     type         = "UserAssigned"
   }
-  request_routing_rule {
-    backend_address_pool_name   = "backpool_erp-ideal-stage"
-    backend_http_settings_name  = "setting_http"
-    http_listener_name          = "listener_erp-ideal-stage_https"
-    name                        = "rule_erp-ideal-stage_https"
-    priority                    = 1
 
-    rule_type                   = "Basic"
-    
+  dynamic "request_routing_rule" {
+    for_each = var.application_backend
+
+    content {
+      name                       = "rule_${request_routing_rule.key}_https"
+      rule_type                  = "Basic"
+      http_listener_name         = "listener_${request_routing_rule.key}_https"
+      backend_address_pool_name  = "backpool_${request_routing_rule.key}"
+      backend_http_settings_name = "setting_http"
+      priority                   = 100 + index(keys(var.application_backend), request_routing_rule.key)
+    }
   }
-  request_routing_rule {
-    backend_address_pool_name   = "backpool_erp-report-stage"
-    backend_http_settings_name  = "setting_http"
-    http_listener_name          = "listener_erp-report-stage_https"
-    name                        = "rule_erp-report-stage_htts"
-    priority                    = 2
-  
-    rule_type                   = "Basic"
-    
-  }
+
+
   sku {
     capacity = 1
     name     = "Standard_v2"
