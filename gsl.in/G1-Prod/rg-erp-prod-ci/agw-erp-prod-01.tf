@@ -57,7 +57,7 @@ data "azurerm_resource_group" "resource_group_for_all_components" {
   name = var.application_gateway_info.resource_group_name
 }
 
-resource "azurerm_public_ip" "pip_agw_erp_prod_01" {
+resource "azurerm_public_ip" "public_ip_for_this_applicationgateway" {
   name                = "pip_${var.application_gateway_info.name}"
   location            = data.azurerm_resource_group.resource_group_for_all_components.location
   resource_group_name = data.azurerm_resource_group.resource_group_for_all_components.name
@@ -120,9 +120,9 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   }
 
   frontend_ip_configuration {
-    name                            = "appGwPublicFrontendIpIPv4"
+    name                            = "frontend_public_ip_configuration"
     private_ip_address_allocation   = "Dynamic"
-    public_ip_address_id            = azurerm_public_ip.pip_agw_erp_prod_01.id
+    public_ip_address_id            = azurerm_public_ip.public_ip_for_this_applicationgateway.id
   }
 
   frontend_port {
@@ -149,7 +149,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
 
     content {
       name                           = "listener_${http_listener.key}_https"
-      frontend_ip_configuration_name = "appGwPublicFrontendIpIPv4"
+      frontend_ip_configuration_name = "frontend_public_ip_configuration"
       frontend_port_name             = "port_443"
       host_name                      = http_listener.value.fqdn
       protocol                       = "Https"
