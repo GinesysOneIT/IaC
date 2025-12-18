@@ -135,8 +135,8 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     tier     = "Standard_v2"
   }
   ssl_certificate {
-
-    key_vault_secret_id = "https://keyvaulterpstage01.vault.azure.net:443/secrets/ssl-cert-wildcard-ginesys-cloud/"
+    data = filebase64("D:\\DOWNLOAD\\ssl.pfx")
+    password           = ""
     name                = "ssl-cert-wildcard-ginesys-cloud"
 
   }
