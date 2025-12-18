@@ -7,11 +7,17 @@ resource "azurerm_public_ip" "public_ip_for_this_applicationgateway" {
   name                = "pip_${var.application_gateway_info.name}"
   location            = data.azurerm_resource_group.resource_group_for_all_components.location
   resource_group_name = data.azurerm_resource_group.resource_group_for_all_components.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku                 = "Standard"
   tags = var.tags
 }
 
+resource "azurerm_user_assigned_identity" "mngid_for_this_application_gateway" {
+  name                = "mngid_${var.application_gateway_info.name}"
+  location            = data.azurerm_resource_group.resource_group_for_all_components.location
+  resource_group_name = data.azurerm_resource_group.resource_group_for_all_components.name
+  tags = var.tags
+}
 
 resource "azurerm_application_gateway" "agw-erp-prod-01" {
   enable_http2                      = true
@@ -104,9 +110,8 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     }
   }
 
-  
   identity {
-    identity_ids = ["/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mngid_erp_systems_stage"]
+    identity_ids = [azurerm_user_assigned_identity.mngid_for_this_application_gateway.id]
     type         = "UserAssigned"
   }
 
