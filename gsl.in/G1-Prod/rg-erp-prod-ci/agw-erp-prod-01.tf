@@ -34,12 +34,11 @@ variable tags {
   default = {
     BACode      = "None"
     Billing     = "Internal"
-    CreatedBy   = "ArindamBanerjee"
+    CreatedBy   = "Terraform"
     CreatedOn   = "2025-12-02"
     Division    = "TechTeam" 
     Environment = "DevStage"
     LifeSpan    = "Permanent" 
-
     Owner       = "RajarshiBasuRoy"
     Product     = "ERP"
     Purpose     = "Connectivity"
