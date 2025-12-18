@@ -12,11 +12,9 @@ resource "azurerm_public_ip" "public_ip_for_this_applicationgateway" {
   tags = var.tags
 }
 
-resource "azurerm_user_assigned_identity" "mngid_for_this_application_gateway" {
-  name                = "mngid_${var.application_gateway_info.name}"
-  location            = data.azurerm_resource_group.resource_group_for_all_components.location
-  resource_group_name = data.azurerm_resource_group.resource_group_for_all_components.name
-  tags = var.tags
+data "azurerm_user_assigned_identity" "mngid_for_this_application_gateway" {
+  name                = "mngid_g1-erp_systems_prod"
+  resource_group_name = "rg-system-prod-ci"
 }
 
 resource "azurerm_application_gateway" "agw-erp-prod-01" {
@@ -111,7 +109,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   }
 
   identity {
-    identity_ids = [azurerm_user_assigned_identity.mngid_for_this_application_gateway.id]
+    identity_ids = [data.azurerm_user_assigned_identity.mngid_for_this_application_gateway.id]
     type         = "UserAssigned"
   }
 
@@ -135,9 +133,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     tier     = "Standard_v2"
   }
   ssl_certificate {
-    data = filebase64("D:\\DOWNLOAD\\ssl.pfx")
-    password           = ""
+    key_vault_secret_id = "https://keyvaultg1erpprod01.vault.azure.net:443/secrets/ssl-cert-wildcard-ginesys-cloud/"
     name                = "ssl-cert-wildcard-ginesys-cloud"
-
   }
 }

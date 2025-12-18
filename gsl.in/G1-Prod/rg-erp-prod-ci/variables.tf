@@ -20,14 +20,27 @@ variable application_backend {
     ginesys_url       = string
   }))
   default = {
-    "vm-erp-rmbayepl-prod-ci" = {
-      ip_address = "172.16.226.80"
-      ginesys_url       = "nunk.ginesys.cloud"
+    "vm-erp-intrend-prod-ci" = {
+      ip_address = "172.16.226.138"
+      ginesys_url       = "intrend.ginesys.cloud"
     },
-    "vm-erp-fashor-prod-ci" = {
-      ip_address = "172.16.226.20"
-      ginesys_url       = "fashor.ginesys.cloud"
+    "vm-erp-cityhubretails-prod-ci" = {
+      ip_address = "172.16.224.101"
+      ginesys_url       = "cityhubretails.ginesys.cloud"
     },
+    "vm-erp-radheshyamstore-prod-ci" = {
+      ip_address = "172.16.226.139"
+      ginesys_url       = "radheshyamstore.ginesys.cloud"
+    },
+    "vm-erp-a1bazaar-prod-ci" = {
+      ip_address = "172.16.224.102"
+      ginesys_url       = "a1bazaar.ginesys.cloud"
+    },
+    "vm-erp-thesajelife-prod-ci" = {
+      ip_address = "172.16.224.100"
+      ginesys_url       = "thesajelife.ginesys.cloud"
+    },
+    
   }
   description = "map of vm name and their private IPs and application configured dns to be added to backend address pool"
 }
