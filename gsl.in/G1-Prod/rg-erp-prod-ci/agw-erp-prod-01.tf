@@ -1,7 +1,14 @@
-variable name {
-  type        = string
-  default     = "agw-erp-prod-01"
-  description = "name of the Application Gateway"
+# Applcation Gateway info like name , snet id etc
+variable application_gateway_info {
+  type = object({
+    name        : string
+    subnet_id   : string
+  })
+  default = {
+    name      = "agw-erp-prod-01"
+    subnet_id = "/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.Network/virtualNetworks/vnet-stage-01/subnets/snet-erp-agw-stage-01"
+  }
+  description = "Applcation Gateway info like name , snet id etc"
 }
 
 # map of vm name and their private IPs and application configured dns to be added to backend address pool
@@ -10,9 +17,15 @@ variable application_backend {
     ip_address = string
     fqdn       = string
   }))
-  default = {}
+  default = {
+    "erp-ideal-prod" = {
+      ip_address = "10.10.10.10"
+      fqdn       = "erp-ideal-prod.ginesys.cloud"
+    }
+  }
   description = "map of vm name and their private IPs and application configured dns to be added to backend address pool"
 }
+
 
 variable tags {
   type = map(string)
@@ -43,7 +56,7 @@ data "azurerm_resource_group" "rg_erp_stage" {
 }
 
 resource "azurerm_public_ip" "pip_agw_erp_prod_01" {
-  name                = "pip_${var.name}"
+  name                = "pip_${var.application_gateway_info.name}"
   location            = data.azurerm_resource_group.rg_erp_stage.location
   resource_group_name = data.azurerm_resource_group.rg_erp_stage.name
   allocation_method   = "Dynamic"
@@ -57,7 +70,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   fips_enabled                      = false
   force_firewall_policy_association = false
   location                          = data.azurerm_resource_group.rg_erp_stage.location
-  name                              = var.name
+  name                              = var.application_gateway_info.name
   resource_group_name               = data.azurerm_resource_group.rg_erp_stage.name
   tags = var.tags
 
@@ -103,6 +116,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     request_timeout                     = 20
     trusted_root_certificate_names      = []
   }
+
   frontend_ip_configuration {
     name                            = "appGwPublicFrontendIpIPv4"
     private_ip_address_allocation   = "Dynamic"
@@ -119,7 +133,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
   }
   gateway_ip_configuration {
     name      = "appGatewayIpConfig"
-    subnet_id = "/subscriptions/93f3f03d-d297-4d9f-b5cb-258adeaf5a38/resourceGroups/rg-system-stage/providers/Microsoft.Network/virtualNetworks/vnet-stage-01/subnets/snet-erp-agw-stage-01"
+    subnet_id = var.application_gateway_info.subnet_id
   }
   global {
     request_buffering_enabled  = true
