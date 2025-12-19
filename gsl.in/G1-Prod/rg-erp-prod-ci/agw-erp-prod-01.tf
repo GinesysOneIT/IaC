@@ -56,17 +56,7 @@ resource "azurerm_application_gateway" "agw-erp-prod-01" {
     affinity_cookie_name                = "ApplicationGatewayAffinity"
     cookie_based_affinity               = "Disabled"
     
-    name                                = "setting_erp-ideal-stage_https"
-    pick_host_name_from_backend_address = false
-    port                                = 443
-    protocol                            = "Https"
-    request_timeout                     = 20
-    trusted_root_certificate_names      = []
-  }
-  backend_http_settings {
-    affinity_cookie_name                = "ApplicationGatewayAffinity"
-    cookie_based_affinity               = "Disabled"
-    name                                = "setting_erp-report-stage_https"
+    name                                = "setting_https"
     pick_host_name_from_backend_address = false
     port                                = 443
     protocol                            = "Https"
