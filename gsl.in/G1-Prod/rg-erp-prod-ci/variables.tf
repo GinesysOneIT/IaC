@@ -50,11 +50,12 @@ variable tags {
   type = map(string)
   default = {
     BACode      = "None"
-    Billing     = "Internal"
-    CreatedBy   = "Terraform"
-    CreatedOn   = "2025-12-02"
-    Division    = "TechTeam" 
-    Environment = "DevStage"
+    Billing     = "CustomerShared"
+    CreatedBy   = "AbdurRashidMondal"
+    IaC = "Terraform"
+    CreatedOn   = "2025-12-18"
+    Division    = "None" 
+    Environment = "Production"
     LifeSpan    = "Permanent" 
     Owner       = "RajarshiBasuRoy"
     Product     = "ERP"

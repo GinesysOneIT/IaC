@@ -10,6 +10,11 @@ resource "azurerm_public_ip" "public_ip_for_this_applicationgateway" {
   allocation_method   = "Static"
   sku                 = "Standard"
   tags = var.tags
+
+ 
+  domain_name_label = "agw-erp-prod-01" # 👈 EXACT value from portal
+  
+  
 }
 
 data "azurerm_user_assigned_identity" "mngid_for_this_application_gateway" {
