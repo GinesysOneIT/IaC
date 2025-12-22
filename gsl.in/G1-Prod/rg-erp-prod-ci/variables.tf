@@ -40,7 +40,46 @@ variable application_backend {
       ip_address = "172.16.224.100"
       ginesys_url       = "thesajelife.ginesys.cloud"
     },
-    
+    "vm-erp-brandstore-prod-ci" = {
+      ip_address = "172.16.226.7"
+      ginesys_url = "brandstore.ginesys.cloud"
+    },
+    "vm-erp-raisinglobal-prod-ci" = {
+      ip_address = "172.16.226.75"
+      ginesys_url = "raisinglobal.ginesys.cloud"
+    },
+    "vm-erp-befitclothing-prod-ci" = {
+      ip_address = "172.16.226.6"
+      ginesys_url = "befitclothing.ginesys.cloud"
+    },
+    "vm-erp-ridhimehra-prod-ci" = {
+      ip_address = "172.16.225.86"
+      ginesys_url = "ridhimehra.ginesys.cloud"
+    },
+    "vm-erp-texonltd-prod-ci" = {
+      ip_address = "172.16.225.90"
+      ginesys_url = "texonltd.ginesys.cloud"
+    },
+    "vm-erp-phonex-prod-ci" = {
+      ip_address = "172.16.226.68"
+      ginesys_url = "phonex.ginesys.cloud"
+    },
+    "vm-erp-gnretail-prod-ci" = {
+      ip_address = "172.16.224.112"
+      ginesys_url = "gnretail.ginesys.cloud"
+    },
+    "vm-erp-zykazfashion-prod" = {
+      ip_address = "172.16.225.122"
+      ginesys_url = "zykazfashion.ginesys.cloud"
+    },
+    "vm-erp-dmsfouraces-prod" = {
+      ip_address = "172.16.225.123"
+      ginesys_url = "dmsfouraces.ginesys.cloud"
+    },
+    "vm-erp-shrujanchanda-prod-ci" = {
+      ip_address = "172.16.225.98"
+      ginesys_url = "shrujanchanda.ginesys.cloud"
+    }
   }
   description = "map of vm name and their private IPs and application configured dns to be added to backend address pool"
 }
