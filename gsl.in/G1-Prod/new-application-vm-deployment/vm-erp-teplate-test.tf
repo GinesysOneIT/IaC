@@ -2,7 +2,7 @@ module "vm-erp-teplate-test" {
   source = "../../../modules/module-deploy-new-vm"
 
   tags = {
-    # Always required Tags
+    # Always changed tags
     GinesysUrl = ""
     Instance= ""
     BACode = ""
@@ -11,12 +11,12 @@ module "vm-erp-teplate-test" {
     CreatedBy = ""
     
     
-    # Somtiomes Required Tags
+    # Somtiomes changed tags
     Owner = "RajarshiBasuRoy"
     SubOwner = "None"
     Division = "None"
 
-    # Rarely Required Tags
+    # Rarely changed tags
     Application = "GinesysERP"
     Billing = "CustomerDedicated"
     DeploymentType = "Live"
@@ -29,13 +29,13 @@ module "vm-erp-teplate-test" {
 
   }
   
-  # always required variables
+  # always change variables
   https_iis_hostname   = "test.ginesys.com"
   system_name         = "TEMPLATE"
   vm_name        = "vm-erp-teplate-test"
 
 
-  # sometimes required variables
+  # sometimes changed variables
   vm_size               = "Standard_D2as_v5"
   resource_group_name   = "rg-erp-prod-ci"
 
@@ -45,7 +45,7 @@ module "vm-erp-teplate-test" {
   #reference_os_disk_id = "/subscriptions/4f070ccd-0168-41ab-a9a4-c13e2dd2626c/resourceGroups/rg-erp-control-ci/providers/Microsoft.Compute/disks/disk-os_vm-ginapp-template-sml-01"
 
 
-  # rarely required variables
+  # rarely changed variables
   location              = "centralindia"
 
   }
