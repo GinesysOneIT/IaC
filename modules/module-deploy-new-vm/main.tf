@@ -1,6 +1,6 @@
 resource "azurerm_managed_disk" "os_disk_copy" {
 
-  name                = "${var.vm_name}-osdisk"
+  name                = "disk_os_${var.vm_name}"
   location            = var.location
   resource_group_name = var.resource_group_name
 
