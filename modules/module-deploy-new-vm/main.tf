@@ -100,3 +100,23 @@ resource "azurerm_virtual_machine_extension" "run_ps" {
 SETTINGS
 
 }
+
+
+resource "null_resource" "dns_config" {
+
+  triggers = {
+    dns_name   = var.https_iis_hostname
+    dns_target = azurerm_public_ip.pip.fqdn
+  }
+
+  # ---------- CREATE ----------
+  provisioner "local-exec" {
+    command = "gincloud dns create ${self.triggers.dns_name} ${self.triggers.dns_target} --type CNAME --domain ginesys.cloud --overwrite"
+  }
+
+  # ---------- DESTROY ----------
+  provisioner "local-exec" {
+    when    = destroy
+    command = "gincloud dns delete ${self.triggers.dns_name} --type CNAME --domain ginesys.cloud --confirm"
+  }
+}

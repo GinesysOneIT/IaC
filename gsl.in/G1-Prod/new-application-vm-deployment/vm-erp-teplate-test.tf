@@ -30,7 +30,7 @@ module "vm-erp-teplate-test" {
   }
   
   # always change variables
-  https_iis_hostname   = "test.ginesys.com"
+  https_iis_hostname   = "testtemplate.ginesys.cloud"
   system_name         = "TEMPLATE"
   vm_name        = "vm-erp-teplate-test"
 
